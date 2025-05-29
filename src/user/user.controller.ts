@@ -8,19 +8,26 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
+  ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { createUserDto } from './dto/create-user.dto';
 import { Prisma } from '@prisma/client';
+import { UserGuard } from './user.guard';
 
 @Controller('user')
 export class UserController {
-  private readonly logger = new Logger(UserController.name);
+  private readonly logger = new Logger(UserController.name, {
+    timestamp: true,
+  });
 
   constructor(private userService: UserService) {}
 
   @Post('/')
-  async create(@Body() body: createUserDto) {
+  @UseGuards(UserGuard)
+  async create(@Body(new ValidationPipe()) body: createUserDto) {
     const { name, email, password } = body;
 
     if (!name || !email || !password) {
@@ -42,7 +49,7 @@ export class UserController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
-  async delete(@Param() param: { id: number }) {
-    await this.userService.delete(Number(param.id));
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    await this.userService.delete(id);
   }
 }

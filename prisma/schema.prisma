@@ -21,6 +21,13 @@ model User {
   role     Role   @default(USER)
 }
 
+model Address {
+  id    String    @id @default(uuid())
+  description String
+  address     String
+  postcode    String
+}
+
 enum Role {
   USER
   ADMIN

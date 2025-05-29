@@ -10,7 +10,9 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  private readonly logger = new Logger(UserService.name);
+  private readonly logger = new Logger(UserService.name, {
+    timestamp: true,
+  });
 
   constructor(private readonly prisma: PrismaService) {}
 
